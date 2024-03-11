@@ -1,8 +1,18 @@
-"use server"
+'use server'
 import Image from "next/image";
+import {Profile} from "@/utils/models/profile.model";
+import {Thread} from "@/utils/models/thread.model";
+import {fetchAllThreads} from "@/utils/http/thread.http";
+import {fetchProfileByProfileId} from "@/utils/http/profile.http";
+import {ThreadCard} from "@/app/home/ThreadCard";
 
 
 export default async function () {
+	const {threads, profiles} =  await getData()
+	console.log(threads)
+	console.log(profiles)
+
+
 	return (
 		<>
 			<main className="container lg:w-2/3 grid pt-5 mx-auto">
@@ -22,23 +32,25 @@ export default async function () {
 					</form>
 				</div>
 				<div className="col-span-full border border-base-content">
-					<div className="card bg-neutral rounded-none border-white text-neutral-content">
-						<div className="card-body">
-							<div className="card-title">
-								<Image className="mask mask-circle" src="/profile-photo.jpeg" alt='profile photo'
-								       width={50} height={50}/>
-								<span className='text-lg'>Handle</span>
-
-							</div>
-							Digging into Angular — the framework that turns your app ideas into reality with ease!
-							#AngularMagic
-							<div className="card-actions">
-							</div>
-						</div>
-					</div>
+					{threads.map((thread: Thread) => <ThreadCard profile={profiles[thread.threadProfileId]} thread={thread} /> )}
 				</div>
 			</main>
 
 		</>
 	)
+}
+
+
+async function getData(): Promise<{profiles:{[profileId: string ]: Profile} , threads: Thread[]}> {
+	const threads = await fetchAllThreads()
+	let profiles : {[profileId: string ]: Profile} = {}
+
+	for(let thread of threads) {
+		profiles[thread.threadProfileId] = await fetchProfileByProfileId(thread.threadProfileId)
+	}
+
+	return {profiles, threads}
+
+
+
 }
