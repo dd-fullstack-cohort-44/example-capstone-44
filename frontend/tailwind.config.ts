@@ -13,7 +13,7 @@ const config: Config = {
     require('daisyui')
   ],
     daisyui: {
-    themes: ["retro"],
+    themes: ["dracula", "light"],
     }
 }
 
