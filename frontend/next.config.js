@@ -15,7 +15,7 @@ const nextConfig = {
   {
     protocol: 'http',
     hostname: 'placekitten.com',
-    port: '',
+    port: '80',
     pathname: '/**/**',
   },
 ]
